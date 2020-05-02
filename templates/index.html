@@ -5,11 +5,25 @@
     Main page
 {% endblock %}
 
-{% block main %}
-   <form id="form">
-              <input id="name" autocomplete="off" autofocus placeholder="Name" type="text">
-              <input type="submit">
-          </form>
+{% block main %}      
+
+         <h1>General chat</h1>
+         <ul class="list-rectangle" id="chat" style="text-align: left" >
+         {% for chat in chats %}
+        <li> {{ chat }} </li>
+         {% endfor %}
+         </ul>    
+         <ul id="chat_new" style="text-align: left" >  
+         </ul>     
+        <form id="new-message">
+            <input id="message" autocomplete="off" autofocus placeholder="type in something" type="text">
+             <input id="submit" type="submit">             
+        </form>      
 {% endblock %}
+
+
+
+
+    
 
 
