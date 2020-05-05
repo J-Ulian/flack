@@ -2,15 +2,64 @@
 
 document.addEventListener('DOMContentLoaded', function(){  
 
+    if (localStorage.getItem("user")) {
+        // Connect to websocket
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+        const name = localStorage.getItem("user");
+        document.querySelector("#prompt").innerHTML = `Hello again ${name}!`;
+        let x = document.querySelectorAll(".form-group");
+        let i;
+        for (i = 0; i < x.length; i++) {
+            x[i].innerHTML = "";
+        }
+        document.getElementById("login").hidden = true;
+
+        load_page('first');
+    };
+
+    
+
+    document.querySelector("#login").onsubmit = () => {
     if (!localStorage.getItem('user')){    
-        const name = prompt("Enter a nickname:");    
+        const name = document.querySelector("#loguser").value; //prompt("Enter a nickname:");
+        const room = document.querySelector("#logroom").value;   
         document.querySelector("#prompt").innerHTML = `Hello ${name}!`;    
         localStorage.setItem('user', name);
-        console.log(localStorage.getItem('user'));      
-        } else {
-            const name = localStorage.getItem("user");
-            document.querySelector("#prompt").innerHTML = `Hello again ${name}!`;
-        };
+        localStorage.setItem('room', room);
+        console.log(localStorage.getItem('user')); 
+        // Connect to websocket
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    // Automatically connect to general channel
+     
+    socket.emit('join',{"room":room, "username":name});
+    console.log("emmiting connection to socket");   
+    load_page('first');
+    return false;
+    load_page('first');
+    };
+    
+    };
+
+    document.querySelector("#new-message").onsubmit = () => {    
+        console.log("new message");        
+        const selec = document.querySelector("#message").value;  
+        console.log(selec)
+        const name = localStorage.getItem('user');
+        const selection = name + ": " + selec;   
+        const room = localStorage.getItem("room");      
+        socket.emit("submit message", {"selection": selection, "room": room});  
+        return false;          
+    };
+
+
+
+ // Set links up to load new pages.
+ document.querySelectorAll('.nav-link').forEach(link => {
+     link.onclick = () => {
+         load_page(link.dataset.page);
+         return false;
+     };
+ });     
 
     
 
@@ -26,31 +75,31 @@ document.addEventListener('DOMContentLoaded', function(){
         }
 
    
-    // Connect to websocket
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    
 
-    // Automatically connect to general channel
-    const name = localStorage.getItem("user");
-    socket.emit('join',{"room": "general", "username":name});
+    
     
     // When connected, configure submit message button
     socket.on("connect", () => {
         document.querySelector("#new-message").onsubmit = () => {            
             const selec = document.querySelector("#message").value;  
             const name = localStorage.getItem('user');
-            const selection = name + ": " + selec;         
-            socket.emit("submit message", {"selection": selection});  
+            const selection = name + ": " + selec;   
+            const room = localStorage.getItem("room");      
+            socket.emit("submit message", {"selection": selection, "room": room});  
             return false;          
         };
     });
 
-    
+
+        
 
     // When a new message is announced, add to the unordered list
     socket.on("chat totals", data => {
         const li = document.createElement('li');
         li.innerHTML = `${data.selection}`;
         document.querySelector("#chat").append(li);
+        
         document.querySelector("#message").value = "";
         document.querySelector('#submit').disabled = true;
     })
@@ -60,22 +109,28 @@ document.addEventListener('DOMContentLoaded', function(){
         const name = localStorage.getItem('user');
         const li = document.createElement('li');
         li.innerHTML = `USER: joined the chat!`;
-        document.querySelector("#chat").append(li);
+        //document.querySelector("#chat").append(li);
         
         
-    })
+    });
 
-    socket.on("my disresponse", data => {
+   socket.on("my disresponse", data => {
         console.log(data.data);
         const name = localStorage.getItem('user');
         const li = document.createElement('li');
         li.innerHTML = `USER: has left the chat!`;
-        document.querySelector("#chat").append(li);
+       // document.querySelector("#chat").append(li);
         
-    })
+    });
 
     socket.on('message', function(message) {
-        console.log(`Received message: ${message}`);
+        const li = document.createElement('li');
+        li.innerHTML = message;
+        document.querySelector("#chat").append(li);
+        const li2 = document.createElement('li');
+        li2.innerHTML =  `${room}`;
+        document.querySelector("#roomsflask").append(li2);
+        console.log(`Received message: ${room}`);
       });
 
 
@@ -83,6 +138,33 @@ document.addEventListener('DOMContentLoaded', function(){
    
 });  
 
+   // Renders contents of new page in main view.
+   function load_page(name) {
+    const request = new XMLHttpRequest();
+    request.open('GET', `/${name}`);
+    request.onload = () => {
+        const response = request.responseText;
+        
+        const li = document.createElement('li');
+        li.innerHTML = response;
+       
+        document.querySelector("#chat").append(li);
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+        socket.on("connect", () => {
+            document.querySelector("#new-message").onsubmit = () => {            
+                const selec = document.querySelector("#message").value;  
+                const name = localStorage.getItem('user');
+                const selection = name + ": " + selec;   
+                const room = localStorage.getItem("room");      
+                socket.emit("submit message", {"selection": selection, "room": room});  
+                return false;          
+            };
+        });
+
+        
+    };
+    request.send();
+};
 
 function onConnect(socket){
 

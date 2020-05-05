@@ -1,13 +1,29 @@
 
-  {% extends "layout.html" %}
+    
+  
+
+{% extends "layout.html" %}
 
 {% block title %}
-    Main page
+    Log In
 {% endblock %}
 
-{% block main %}      
-
-         <h1>General chat</h1>
+{% block main %}
+<container id="clearout">
+    <form id="login" action="/login" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" id="loguser" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" id="logroom" name="room" placeholder="Room" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" type="password">
+        </div>
+        <button id="fb" class="btn btn-primary" type="button">Join</button>
+    </form>
+    </container>
+   
          <ul class="list-rectangle" id="chat" style="text-align: left" >
          {% for chat in chats %}
         <li> {{ chat }} </li>
@@ -15,10 +31,13 @@
          </ul>    
            <form id="new-message">
             <input id="message" autocomplete="off" autofocus placeholder="type in something" type="text">
-             <input id="submit" type="submit">             
-        </form>      
-        
+             <button id="submit" class="btn btn-primary" type="button">Join</button>          
+        </form>     
+
 {% endblock %}
+
+
+
 
 
 
