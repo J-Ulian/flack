@@ -1,13 +1,25 @@
+
+
+
 import os
 import requests
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, session
+from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from collections import defaultdict
+from random import randrange
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
 socketio = SocketIO(app)
+
+# Configure session to use filesystem
+
+
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 chats = ["Bot: Welcome to the main chat!", "Second message!"]
 chats2 = ["Bot: Welcome to the second chat!"]
@@ -15,17 +27,20 @@ chats3 = ["Bot: Welcome to the third chat!"]
 rooms = ["first"]
 users = []
 
-room1 = room2 = room3 = room4 = room5 = room6 = room7 =  room8 = room9 = room10 = None
-
 thischat =	{
-  "room": "Main",
-  "messages": "Bot: Welcome to the main chat!"
+  "user": "roof",
+  "user2": "main"
 }
-x = thischat["room"]
+
+
+
 dictchat = {"first": "empty chat, \n second string though"}
 
 messages = defaultdict(list)
-channels = ["Programming"]
+
+messages["main"].append("first")
+messages["main"].append("second")
+
 
 def create_room(name):
     name = dict(room="%s" % name, messages="")
@@ -44,7 +59,17 @@ thisdict = dict(brand="Ford", model="Mustang", year=1964)
 @app.route("/")
 def index():
     
-    return render_template("login.html")
+    try:
+        if session["user_id"]:
+            x = thischat[session["user_id"]]
+            print(f' CURRENT SESSSSSSSSSION {session["user_id"]}')
+        return render_template("index.html",messages=messages[x])
+    except:
+        session["user_id"] = randrange(100000000000000000000)
+        print(f' CURRENT SESSSSSSSSSION NOOOOOO')
+        return render_template("index.html")
+
+    
    # return render_template("index.html",chats=chats, rooms=rooms)
 
 @app.route("/logout")
@@ -58,7 +83,9 @@ def chat(data):
     selection = data["selection"]
     room = data["room"]  
     print(selection)
-    chats.append(selection)    
+    chats.append(selection)  
+    messages[room].append(selection)
+    print(messages)  
     emit("chat totals", data, broadcast=True)
     check_length()
 
@@ -87,8 +114,15 @@ def on_join(data):
     username = data['username']
     room = data['room']
     join_room(room)
-    create_room(room)    
-    print(f"requestsid - {request.sid}")
+    create_room(room)  
+    print(f' CURRENT SESSSSSSSSSION on join {session["user_id"]}')  
+    thischat[session["user_id"]] = room
+    messages[room].append("")
+    for room in messages:
+        print(room)
+    
+
+    print(f"REQUEEEEEEEEEESSSSSSTTTTTTTT - {request.sid}")
      
     if room not in rooms:
         rooms.append(room)

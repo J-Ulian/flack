@@ -33,6 +33,12 @@ document.addEventListener('DOMContentLoaded', function(){
      
     socket.emit('join',{"room":room, "username":name});
     console.log("emmiting connection to socket");   
+    let x = document.querySelectorAll(".form-group");
+        let i;
+        for (i = 0; i < x.length; i++) {
+            x[i].innerHTML = "";
+        }
+        document.getElementById("login").hidden = true;
     load_page('first');
     return false;
     load_page('first');

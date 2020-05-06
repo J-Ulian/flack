@@ -1,11 +1,7 @@
-
-    
-  
-
 {% extends "layout.html" %}
 
 {% block title %}
-    Log In
+    Main
 {% endblock %}
 
 {% block main %}
@@ -20,28 +16,17 @@
         <div class="form-group">
             <input class="form-control" name="password" placeholder="Password" type="password">
         </div>
-        <button id="fb" class="btn btn-primary" type="button">Join</button>
+        <button class="btn btn-primary" type="submit">Join</button>
     </form>
     </container>
-   
-         <ul class="list-rectangle" id="chat" style="text-align: left" >
-         {% for chat in chats %}
-        <li> {{ chat }} </li>
+    <form id="new-message" >
+            <input id="message" autocomplete="off" autofocus placeholder="type in something" type="text">
+             <button id="submit" type="button">Send</button>             
+        </form>    
+
+    <ul class="list-rectangle" id="chat" style="text-align: left" >
+         {% for  message in messages %}
+        <li id="chooseme"> {{  message }} </li>
          {% endfor %}
          </ul>    
-           <form id="new-message">
-            <input id="message" autocomplete="off" autofocus placeholder="type in something" type="text">
-             <button id="submit" class="btn btn-primary" type="button">Join</button>          
-        </form>     
-
 {% endblock %}
-
-
-
-
-
-
-
-    
-
-
