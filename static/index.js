@@ -1,11 +1,18 @@
 
-
 document.addEventListener('DOMContentLoaded', function(){  
 
+    var name = "name";
+    var room = "room";    
+
+    if (!localStorage.getItem("user")){
+        document.getElementById("chat").hidden = true;
+        document.getElementById("new-message").hidden = true;
+    }
+
     if (localStorage.getItem("user")) {
-        // Connect to websocket
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-        const name = localStorage.getItem("user");
+    
+        name = localStorage.getItem("user");
+        room = localStorage.getItem("room");
         document.querySelector("#prompt").innerHTML = `Hello again ${name}!`;
         let x = document.querySelectorAll(".form-group");
         let i;
@@ -13,49 +20,50 @@ document.addEventListener('DOMContentLoaded', function(){
             x[i].innerHTML = "";
         }
         document.getElementById("login").hidden = true;
-
-        load_page('first');
+        
+       // load_page('first');
     };
 
     
 
     document.querySelector("#login").onsubmit = () => {
-    if (!localStorage.getItem('user')){    
-        const name = document.querySelector("#loguser").value; //prompt("Enter a nickname:");
-        const room = document.querySelector("#logroom").value;   
+       
+         name = document.querySelector("#loguser").value; //prompt("Enter a nickname:");
+         room = document.querySelector("#logroom").value;   
         document.querySelector("#prompt").innerHTML = `Hello ${name}!`;    
         localStorage.setItem('user', name);
         localStorage.setItem('room', room);
         console.log(localStorage.getItem('user')); 
-        // Connect to websocket
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-    // Automatically connect to general channel
-     
-    socket.emit('join',{"room":room, "username":name});
-    console.log("emmiting connection to socket");   
+      
     let x = document.querySelectorAll(".form-group");
         let i;
         for (i = 0; i < x.length; i++) {
             x[i].innerHTML = "";
         }
         document.getElementById("login").hidden = true;
-    load_page('first');
+  //  load_page('first');
+    document.getElementById("chat").hidden = false;
+        document.getElementById("new-message").hidden = false;
+        location.reload();
     return false;
-    load_page('first');
-    };
+    
+    
     
     };
 
-    document.querySelector("#new-message").onsubmit = () => {    
-        console.log("new message");        
-        const selec = document.querySelector("#message").value;  
-        console.log(selec)
-        const name = localStorage.getItem('user');
-        const selection = name + ": " + selec;   
-        const room = localStorage.getItem("room");      
-        socket.emit("submit message", {"selection": selection, "room": room});  
-        return false;          
-    };
+
+   
+
+       // Connect to websocket
+       var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+       // Automatically connect to room in question
+        
+       socket.emit('join',{"room":room, "username":name});
+       console.log(`joining ${room}`);  
+
+       socket.on('connect', () => {
+
+    
 
 
 
@@ -86,22 +94,24 @@ document.addEventListener('DOMContentLoaded', function(){
     
     
     // When connected, configure submit message button
-    socket.on("connect", () => {
+  //  socket.on("connect", () => {
         document.querySelector("#new-message").onsubmit = () => {            
             const selec = document.querySelector("#message").value;  
-            const name = localStorage.getItem('user');
+            name = localStorage.getItem('user');
             const selection = name + ": " + selec;   
-            const room = localStorage.getItem("room");      
-            socket.emit("submit message", {"selection": selection, "room": room});  
+            room = localStorage.getItem("room");      
+            socket.emit("submit message", {"selection": selection, "room": room});
+            document.querySelector("#message").value = "";  
             return false;          
         };
-    });
+   // });
 
 
         
 
     // When a new message is announced, add to the unordered list
     socket.on("chat totals", data => {
+        console.log("something");
         const li = document.createElement('li');
         li.innerHTML = `${data.selection}`;
         document.querySelector("#chat").append(li);
@@ -110,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function(){
         document.querySelector('#submit').disabled = true;
     })
 
-    socket.on("my response", data => {
+  /*  socket.on("my response", data => {
         console.log(data.data);
         const name = localStorage.getItem('user');
         const li = document.createElement('li');
@@ -118,31 +128,56 @@ document.addEventListener('DOMContentLoaded', function(){
         //document.querySelector("#chat").append(li);
         
         
-    });
+    }); 
 
    socket.on("my disresponse", data => {
         console.log(data.data);
-        const name = localStorage.getItem('user');
+        name = localStorage.getItem('user');
         const li = document.createElement('li');
         li.innerHTML = `USER: has left the chat!`;
        // document.querySelector("#chat").append(li);
         
-    });
+    }); */
 
     socket.on('message', function(message) {
         const li = document.createElement('li');
-        li.innerHTML = message;
-        document.querySelector("#chat").append(li);
-        const li2 = document.createElement('li');
-        li2.innerHTML =  `${room}`;
-        document.querySelector("#roomsflask").append(li2);
-        console.log(`Received message: ${room}`);
+        li.innerHTML = message["selection"];
+        console.log(message["selection"]);
+        if (message["selection"] != undefined){
+            document.querySelector("#chat").append(li);
+        }
+        
+        
       });
 
 
     
    
 });  
+
+/*socket.on("chat totals", data => {
+    console.log("something");
+    const li = document.createElement('li');
+    li.innerHTML = `${data.selection}`;
+    document.querySelector("#chat").append(li);
+    
+    document.querySelector("#message").value = "";
+    document.querySelector('#submit').disabled = true;
+});
+
+let matches = document.querySelectorAll("li");
+let i;
+    for (i = 0; i < matches.length; i++) {
+    if (matches[i] == $0){
+matches[i].hidden = true;
+console.log("found")}
+        
+    }*/
+
+});
+
+
+
 
    // Renders contents of new page in main view.
    function load_page(name) {
@@ -151,23 +186,8 @@ document.addEventListener('DOMContentLoaded', function(){
     request.onload = () => {
         const response = request.responseText;
         
-        const li = document.createElement('li');
-        li.innerHTML = response;
        
-        document.querySelector("#chat").append(li);
-        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-        socket.on("connect", () => {
-            document.querySelector("#new-message").onsubmit = () => {            
-                const selec = document.querySelector("#message").value;  
-                const name = localStorage.getItem('user');
-                const selection = name + ": " + selec;   
-                const room = localStorage.getItem("room");      
-                socket.emit("submit message", {"selection": selection, "room": room});  
-                return false;          
-            };
-        });
-
-        
+                
     };
     request.send();
 };

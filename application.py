@@ -4,7 +4,7 @@
 import os
 import requests
 
-from flask import Flask, jsonify, render_template, request, session
+from flask import Flask, jsonify, render_template, request, session, redirect
 from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from collections import defaultdict
@@ -21,7 +21,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-chats = ["Bot: Welcome to the main chat!", "Second message!"]
+chats = ["Bot: Welcome to the chat!", "Second message!"]
 chats2 = ["Bot: Welcome to the second chat!"]
 chats3 = ["Bot: Welcome to the third chat!"]
 rooms = ["first"]
@@ -76,22 +76,9 @@ def index():
 def bye():
     return("Bye-bye!")
 
-
-
-@socketio.on("submit message")
-def chat(data):
-    selection = data["selection"]
-    room = data["room"]  
-    print(selection)
-    chats.append(selection)  
-    messages[room].append(selection)
-    print(messages)  
-    emit("chat totals", data, broadcast=True)
-    check_length()
-
-
-
-
+@app.route("/login")
+def welcome():
+    return redirect("/")
 
 def check_length():
     if len(chats) > 99:
@@ -106,6 +93,22 @@ def test_connect():
 def test_disconnect():
     print('Client disconnected')
     emit('my disresponse', {'data': 'disconnected'}, broadcast=True)
+   
+
+@socketio.on("send message")
+def message(data):
+    room = data['channel']
+    emit('broadcast message', data['message'], room=room)
+  
+   
+@socketio.on("submit message")
+def handle_message(message):
+    selection = message["selection"]
+    room = message["room"]  
+    print(selection)     
+    messages[room].append(selection)    
+    send(message, room=room)
+    
         
 
 
@@ -113,21 +116,14 @@ def test_disconnect():
 def on_join(data):
     username = data['username']
     room = data['room']
-    join_room(room)
-    create_room(room)  
-    print(f' CURRENT SESSSSSSSSSION on join {session["user_id"]}')  
+    join_room(room)       
     thischat[session["user_id"]] = room
-    messages[room].append("")
-    for room in messages:
-        print(room)
+    #messages[room].append(f"{username} has entered the {room}.")
+    #send(username + ' has entered the room ' + room, room=room)
+    
     
 
-    print(f"REQUEEEEEEEEEESSSSSSTTTTTTTT - {request.sid}")
-     
-    if room not in rooms:
-        rooms.append(room)
-    send(username + ' has entered the room ' + room, room=room, broadcast=True)
-    print(room)
+
 
 @socketio.on('leave')
 def on_leave(data):
