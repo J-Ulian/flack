@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }
         document.getElementById("login").hidden = true;
         
-       // load_page('first');
+        load_page(room);
     };
 
     
@@ -77,7 +77,9 @@ document.addEventListener('DOMContentLoaded', function(){
          localStorage.setItem('room', trimmedroom);         
          socket.emit('join',{"room":trimmedroom, "username":name});
          console.log(`joining new ${trimmedroom}`);  
-         window.location.reload(true);        
+         load_page(link.dataset.page);
+         return false;
+         //window.location.reload(true);        
          
          
      };
@@ -200,18 +202,45 @@ function getDuplicateArrayElements(arr){
 
 
 
-   // Renders contents of new page in main view.
-   function load_page(name) {
+  // Renders contents of new page in main view.
+  function load_page(name) {
     const request = new XMLHttpRequest();
     request.open('GET', `/${name}`);
+    request.responseType = 'json';
     request.onload = () => {
-        const response = request.responseText;
-        
-       
-                
+        console.log(request.response);
+        document.querySelector("#chat").innerHTML = "";
+        const response = request.response;
+        response.forEach((rec) => {
+            const li = document.createElement('li');
+            li.innerHTML = rec;            
+            document.querySelector("#chat").append(li);
+        })
+        //document.querySelector('#bohhhdy').innerHTML = response;
     };
     request.send();
+}
+
+var getJSON = function(url, successHandler, errorHandler) {
+	var xhr = new XMLHttpRequest();
+	xhr.open('get', url, true);
+	xhr.responseType = 'json';
+	xhr.onload = function() {
+		var status = xhr.status;
+		if (status == 200) {
+			successHandler && successHandler(xhr.response);
+		} else {
+			errorHandler && errorHandler(status);
+		}
+	};
+	xhr.send();
 };
+
+/*getJSON('https://mathiasbynens.be/demo/ip', function(data) {
+	alert('Your public IP address is: ' + data.ip);
+}, function(status) {
+	alert('Something went wrong.');
+});*/
 
 function onConnect(socket){
 

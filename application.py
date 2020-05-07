@@ -1,9 +1,5 @@
 
-
-
-import os
-import requests
-
+import os, requests, json
 from flask import Flask, jsonify, render_template, request, session, redirect
 from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
@@ -144,17 +140,14 @@ def on_leave(data):
     leave_room(room)
     send(username + ' has left the room.', room=room)
 
-@app.route("/first")
-def first():
-    return chats[0]
 
-@app.route("/second")
-def second():
-    return x
 
-@app.route("/third")
-def third():
-    return chats3[0]
+
+@app.route("/<chatroom>")
+def book_api(chatroom):
+    """Return chatroom"""
+    my_json_string = json.dumps(messages[chatroom])
+    return my_json_string
 
 
 
