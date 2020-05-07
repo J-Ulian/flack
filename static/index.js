@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function(){
     
         name = localStorage.getItem("user");
         room = localStorage.getItem("room");
-        document.querySelector("#prompt").innerHTML = `Hello again ${name}!`;
+        document.querySelector("#prompt").innerHTML = `User ${name} in room ${room}`;
         let x = document.querySelectorAll(".form-group");
         let i;
         for (i = 0; i < x.length; i++) {
@@ -28,13 +28,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
     document.querySelector("#login").onsubmit = () => {
        
-         name = document.querySelector("#loguser").value; //prompt("Enter a nickname:");
+         name = document.querySelector("#loguser").value; 
          room = document.querySelector("#logroom").value;   
         document.querySelector("#prompt").innerHTML = `Hello ${name}!`;    
         localStorage.setItem('user', name);
         localStorage.setItem('room', room);
-        console.log(localStorage.getItem('user')); 
-      
+              
     let x = document.querySelectorAll(".form-group");
         let i;
         for (i = 0; i < x.length; i++) {
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function(){
   //  load_page('first');
     document.getElementById("chat").hidden = false;
         document.getElementById("new-message").hidden = false;
-        location.reload();
+        window.location.reload(true);
     return false;
     
     
@@ -64,14 +63,23 @@ document.addEventListener('DOMContentLoaded', function(){
        socket.on('connect', () => {
 
     
-
+        
 
 
  // Set links up to load new pages.
  document.querySelectorAll('.nav-link').forEach(link => {
-     link.onclick = () => {
-         load_page(link.dataset.page);
-         return false;
+     link.onclick = () => {         
+         let newroom = link.innerHTML;  
+         console.log(newroom);
+         let trimmedroom = newroom.trim();
+         console.log(trimmedroom); 
+         socket.emit('leave',{"room":room, "username":name});    
+         localStorage.setItem('room', trimmedroom);         
+         socket.emit('join',{"room":trimmedroom, "username":name});
+         console.log(`joining new ${trimmedroom}`);  
+         window.location.reload(true);        
+         
+         
      };
  });     
 
@@ -175,6 +183,19 @@ console.log("found")}
     }*/
 
 });
+
+
+
+function getDuplicateArrayElements(arr){
+    var sorted_arr = arr.slice().sort();
+    var results = [];
+    for (var i = 0; i < sorted_arr.length - 1; i++) {
+        if (sorted_arr[i + 1] === sorted_arr[i]) {
+            results.push(sorted_arr[i]);
+        }
+    }
+    return results;
+}
 
 
 

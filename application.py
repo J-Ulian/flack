@@ -53,7 +53,12 @@ thisdict = dict(brand="Ford", model="Mustang", year=1964)
 # note that keywords are not string literals
 # note the use of equals rather than colon for the assignment
 
-
+def reverse_dict():
+    reverse_dict = {}
+    for key, value in thischat.items():
+        try:reverse_dict[value].append(key)
+        except:reverse_dict[value] = [key]    
+    return reverse_dict
 
 
 @app.route("/")
@@ -62,12 +67,14 @@ def index():
     try:
         if session["user_id"]:
             x = thischat[session["user_id"]]
-            print(f' CURRENT SESSSSSSSSSION {session["user_id"]}')
-        return render_template("index.html",messages=messages[x])
-    except:
-        session["user_id"] = randrange(100000000000000000000)
+            print(f' CURRENT chats {session["user_id"]}')
+            room_list = reverse_dict()
+            print(room_list)
+        return render_template("index.html",messages=messages[x], room_list=room_list)
+    except:        
+        return redirect("/login")
         print(f' CURRENT SESSSSSSSSSION NOOOOOO')
-        return render_template("index.html")
+    return render_template("index.html")
 
     
    # return render_template("index.html",chats=chats, rooms=rooms)
@@ -78,7 +85,12 @@ def bye():
 
 @app.route("/login")
 def welcome():
-    return redirect("/")
+    try:
+        if session["user_id"]:
+            return redirect("/")
+    except:
+        session["user_id"] = randrange(100000000000000000000)
+        return render_template("index.html")
 
 def check_length():
     if len(chats) > 99:
