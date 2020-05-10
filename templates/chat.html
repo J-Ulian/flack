@@ -1,0 +1,11 @@
+{% block chat %}
+<hr>
+ <ul class="list-rectangle" id="chat" style="text-align: left" >
+         {% for chat in chats %}
+        <li> {{ chat }} </li>
+         {% endfor %}
+         </ul>    
+<hr>
+           
+
+{% endblock %}

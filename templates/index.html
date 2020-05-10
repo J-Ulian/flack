@@ -1,41 +1,43 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Main
+Main
 {% endblock %}
 
 {% block main %}
 <container id="clearout">
     <form id="login" action="/login" method="post">
         <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" id="loguser" name="username" placeholder="Username" type="text">
+            <input autocomplete="off" autofocus class="form-control" id="loguser" name="username" placeholder="Username"
+                type="text">
         </div>
         <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" id="logroom" name="room" placeholder="Room" type="text">
+            <input autocomplete="off" autofocus class="form-control" id="logroom" name="room" placeholder="Room"
+                type="text">
         </div>
         <div class="form-group">
             <input class="form-control" name="password" placeholder="Password" type="password">
         </div>
         <button class="btn btn-primary" type="submit">Join</button>
     </form>
-    </container>
-    <form id="new-message" >
-            <input id="message" autocomplete="off" autofocus placeholder="type in something" type="text">
-             <button id="submit" type="button">Send</button>             
-        </form>    
-
-    <ul class="list-rectangle" id="chat" style="text-align: left" >
-         {% for  message in messages %}
-        <li id="chooseme"> {{  message }} </li>
-         {% endfor %}
-         </ul>    
+</container>
+<form id="new-message">
+    <input id="message" autocomplete="off" autofocus placeholder="type in something" type="text">
+    <button id="submit" type="button">Send</button>
+</form>
+<ul class="list-rectangle" id="userinfo" style="text-align: left"> </ul>
 <hr>
-        <ol class="list-rectangle" id="comnaty" style="text-align: left" >
-         {% for room in room_list %}
-        <li id="comnata"><a href="" class="nav-link" data-page="{{room}}"> {{ room }} </a></li>
-         {% endfor %}
-         </ul>   
+<ul class="list-rectangle" id="chat" style="text-align: left">
+    {% for  message in messages %}
+    <li id="chooseme"> {{  message }} </li>
+    {% endfor %}
+</ul>
+<ul class="list-rectangle" id="userinfo" style="text-align: left"> </ul>
+<hr>
+<ol class="list-rectangle" id="comnaty" style="text-align: left">
+    {% for room in room_list %}
+    <li id="comnata"><a href="" class="nav-link" data-page="{{room}}"> {{ room }} </a></li>
+    {% endfor %}
+    </ul>
 
-{% endblock %}
-
-
+    {% endblock %}

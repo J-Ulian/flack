@@ -5,6 +5,8 @@ from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from collections import defaultdict
 from random import randrange
+from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -124,13 +126,17 @@ def handle_message(message):
 def on_join(data):
     username = data['username']
     room = data['room']
+    print(data['room'])
     join_room(room)       
     thischat[session["user_id"]] = room
+    print(thischat[session["user_id"]])
     #messages[room].append(f"{username} has entered the {room}.")
-    #send(username + ' has entered the room ' + room, room=room)
-    
-    
-
+    jo = username + ' has entered the room ' + room + " at " + datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+    print(username, room)
+    if (username != "name"  and room != "room"):
+        send(jo, room=room)
+        messages[room].append(jo)
+    #send(username + ' has entered the room.', room=room)
 
 
 @socketio.on('leave')
@@ -138,7 +144,11 @@ def on_leave(data):
     username = data['username']
     room = data['room']
     leave_room(room)
-    send(username + ' has left the room.', room=room)
+    jo = username + ' has left the room ' + room + " at " + datetime.now().strftime('%H:%M:%S %d-%m-%Y')
+    if (username != "name"  and room != "room"):
+        #send(jo, room=room)
+        #messages[room].append(jo)
+        send(username + ' has left the room.', room=room)
 
 
 
