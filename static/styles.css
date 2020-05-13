@@ -1,78 +1,176 @@
-nav .navbar-brand
-{
-    /* size for brand */
-    font-size: xx-large;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+nav .navbar-brand {
+  /* size for brand */
+  font-size: xx-large;
 }
 
 /* colors for brand */
-nav .navbar-brand .blue
-{
-    color: #537fbe;
-}
-nav .navbar-brand .red
-{
-    color: #ea433b;
-}
-nav .navbar-brand .yellow
-{
-    color: #f5b82e;
-}
-nav .navbar-brand .green
-{
-    color: #2e944b;
+nav .navbar-brand .blue {
+  color: #537fbe;
 }
 
-main .form-control
-{
-    /* center form controls */
-    display: inline-block;
-
-    /* override Bootstrap's 100% width for form controls */
-    width: auto;
+nav .navbar-brand .red {
+  color: #ea433b;
 }
 
-main
-{
-    /* scroll horizontally as needed */
-    overflow-x: auto;
-
-    /* center contents */
-    text-align: center;
+nav .navbar-brand .yellow {
+  color: #f5b82e;
 }
 
-main img
-{
-    /* constrain images on small screens */
-    max-width: 100%;
+nav .navbar-brand .green {
+  color: #2e944b;
 }
 
+main .form-control {
+  /* center form controls */
+  display: inline-block;
+
+  /* override Bootstrap's 100% width for form controls */
+  width: auto;
+}
+
+main {
+  /* scroll horizontally as needed */
+  overflow-x: auto;
+
+  /* center contents */
+  text-align: center;
+}
+
+main img {
+  /* constrain images on small screens */
+  max-width: 100%;
+}
 
 .list-rectangle {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .list-rectangle>li {
-    position: relative;
-    display: block;
-    margin-bottom: .25rem;
-    padding: .325rem .825rem .325rem 1.325rem;
-    color: rgb(0, 0, 0);
-    background: #f6f6f6;
-  }
-  .list-rectangle>li:last-child {
-    margin-bottom: 0;
-  }
-  .list-rectangle>li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0.5rem;
-    background: #ec407a;
-  }
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
+.list-rectangle > li {
+  position: relative;
+  display: block;
+  margin-bottom: 0.25rem;
+  padding: 0.325rem 0.825rem 0.325rem 1.325rem;
+  color: rgb(0, 0, 0);
+  background: #f6f6f6;
+}
 
+.list-rectangle > li:last-child {
+  margin-bottom: 0;
+}
 
-  
+.list-rectangle > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0.5rem;
+  background: #ec407a;
+}
+
+#clearout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  background: url("/static/img/person-with-grey-ring-using-macbook-pro-159760.jpg")
+    no-repeat center center / cover;
+  height: 85vh;
+  z-index: 5;
+}
+
+#logtext {
+  font-size: 3rem;
+  width: 100%;
+  color: #fff;
+  margin-bottom: 5rem;
+}
+
+#wrapper {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+#left {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: stretch;
+  justify-items: space-evenly;
+  margin-right: 3rem;
+  z-index: 99;
+}
+
+#right {
+  display: flex;
+  flex: 5;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.aClassName {
+  margin-bottom: 1.3rem;
+
+  border-radius: 5px;
+  background: rgb(48, 152, 221);
+
+  color: #fff;
+  padding: 0.5rem 0.5rem;
+  line-height: 1.3rem;
+  width: 800px;
+  word-wrap: break-word;
+  font-weight: 500;
+}
+
+.comnata > a {
+  padding: 0.7rem 1rem;
+  height: 2.7rem;
+  display: block;
+  border: 1px solid #f4f4f4;
+  border-radius: 2px;
+  font-weight: 500;
+  background: #cecfd3;
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.5s;
+  z-index: 1;
+}
+
+.comnata > a:hover {
+  background: #a5a5a5;
+  border-color: #222222;
+  color: #000000;
+}
+
+#message {
+  display: block;
+  width: 90%;
+  font-size: 1rem;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+}
+
+#rooms {
+  visibility: hidden;
+}
+
+#comnaty {
+  z-index: 0;
+}

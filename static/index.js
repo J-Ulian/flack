@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("login").hidden = true;
 
         load_page(room);
+        show();
     };
 
 
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("chat").hidden = false;
         document.getElementById("new-message").hidden = false;
         window.location.reload(true);
+        show();
         return false;
 
 
@@ -88,6 +90,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 load_page(link.dataset.page);
                 room = trimmedroom;
                 document.querySelector("#prompt").innerHTML = `User ${name} in room ${room}`;
+                show();
+                console.log("showed");
+
                 return false;
                 //window.location.reload(true);        
 
@@ -125,9 +130,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 "room": room
             });
             document.querySelector("#message").value = "";
+            //document.getElementById('submit').scrollIntoView();
             return false;
         };
         // });
+
+        document.getElementById("logout").addEventListener("click", logOut);
 
 
 
@@ -135,9 +143,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // When a new message is announced, add to the unordered list
         socket.on("chat totals", data => {
             console.log("something");
-            const li = document.createElement('li');
-            li.innerHTML = `${data.selection}`;
-            document.querySelector("#chat").append(li);
+            const div = document.createElement('div');
+
+            div.innerHTML = `${data.selection}`;
+            document.querySelector("#chat").append(div);
 
             document.querySelector("#message").value = "";
             document.querySelector('#submit').disabled = true;
@@ -156,21 +165,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         socket.on('message', function (message) {
-            const li = document.createElement('li');
-            li.innerHTML = message["selection"];
+            const div = document.createElement('div');
+            div.className = "aClassName";
+            div.innerHTML = message["selection"];
             console.log(message["selection"]);
             try {
                 if (message.match(/^.*has entered the room.*$/)) {
                     console.log(message)
-                    const li = document.createElement('li');
-                    li.innerHTML = message;
-                    document.querySelector("#userinfo").append(li);
+                    const div = document.createElement('div');
+                    div.className = "aClassName";
+                    div.innerHTML = message;
+                    document.querySelector("#userinfo").append(div);
                 }
             } catch (e) {
                 if (e instanceof TypeError) {
                     // код для обработки исключений TypeError
                     if (message["selection"] != undefined) {
-                        document.querySelector("#chat").append(li);
+                        div.className = "aClassName";
+                        document.querySelector("#chat").append(div);
                     }
                 } else if (e instanceof RangeError) {
                     // код для обработки исключений RangeError
@@ -224,7 +236,18 @@ function getDuplicateArrayElements(arr) {
     }
 
     return results;
-}
+};
+
+function logOut() {
+    window.localStorage.clear();
+    room = localStorage.getItem("room");
+    socket.emit("logsy", {
+        "room": room
+    });
+
+    window.location.reload(true);
+
+};
 
 
 
@@ -237,16 +260,32 @@ function load_page(name) {
     request.onload = () => {
         console.log(request.response);
         document.querySelector("#chat").innerHTML = "";
+        document.querySelector("#logtext").innerHTML = "";
+        document.querySelector('#clearout').style.background = "none";
         const response = request.response;
         response.forEach((rec) => {
-            const li = document.createElement('li');
-            li.innerHTML = rec;
-            document.querySelector("#chat").append(li);
+            const div = document.createElement('div');
+            div.innerHTML = rec;
+            div.className = "aClassName";
+            document.querySelector("#chat").append(div);
         })
         //document.querySelector('#bohhhdy').innerHTML = response;
     };
     request.send();
 }
+
+
+
+
+function bottom() {
+    document.getElementById('bottom').scrollIntoView();
+
+};
+
+function show() {
+    document.getElementById("rooms").style.visibility = "visible";
+}
+
 
 var getJSON = function (url, successHandler, errorHandler) {
     var xhr = new XMLHttpRequest();

@@ -5,39 +5,51 @@ Main
 {% endblock %}
 
 {% block main %}
-<container id="clearout">
-    <form id="login" action="/login" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" id="loguser" name="username" placeholder="Username"
-                type="text">
-        </div>
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" id="logroom" name="room" placeholder="Room"
-                type="text">
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="password" placeholder="Password" type="password">
-        </div>
-        <button class="btn btn-primary" type="submit">Join</button>
-    </form>
-</container>
-<form id="new-message">
-    <input id="message" autocomplete="off" autofocus placeholder="type in something" type="text">
-    <button id="submit" type="button">Send</button>
-</form>
-<ul class="list-rectangle" id="userinfo" style="text-align: left"> </ul>
-<hr>
-<ul class="list-rectangle" id="chat" style="text-align: left">
-    {% for  message in messages %}
-    <li id="chooseme"> {{  message }} </li>
-    {% endfor %}
-</ul>
-<ul class="list-rectangle" id="userinfo" style="text-align: left"> </ul>
-<hr>
-<ol class="list-rectangle" id="comnaty" style="text-align: left">
-    {% for room in room_list %}
-    <li id="comnata"><a href="" class="nav-link" data-page="{{room}}"> {{ room }} </a></li>
-    {% endfor %}
-    </ul>
 
-    {% endblock %}
+<h1 id="logtext">Choose A Room and A Nickname:</h1>
+<form id="login" action="/login" method="post">
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" id="loguser" name="username" placeholder="Username"
+            type="text">
+    </div>
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" id="logroom" name="room" placeholder="Room"
+            type="text">
+    </div>
+
+    <button class="btn btn-primary" type="submit">Join</button>
+</form>
+<div id="wrapper">
+    <div id="left">
+        <h2 id="rooms">Rooms:</h2>
+        <div id="comnaty">
+            {% for room in room_list %}
+            <div class="comnata"><a href="" class="nav-link" data-page="{{room}}"> {{ room }} </a></div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+    <div id="right">
+
+
+        <div id="userinfo" style="text-align: left"> </div>
+
+        <div id="chat" style="text-align: left">
+            {% for  message in messages %}
+            <div id="chooseme"> {{  message }} </div>
+            {% endfor %}
+        </div>
+        <div id="userinfo" style="text-align: left"> </div>
+        <form id="new-message" method="post">
+            <textarea id="message" autocomplete="off" autofocus placeholder="type in something" textarea cols="25"
+                rows="3"></textarea>
+            <button id="submit" input type="submit">Send</button>
+        </form>
+
+
+
+    </div>
+</div>
+{% endblock %}
