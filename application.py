@@ -83,7 +83,7 @@ def index():
 
 @app.route("/log/out")
 def bye():
-    return("Bye-bye!")
+    return render_template("index.html")
 
 
 @app.route("/login")
@@ -131,7 +131,7 @@ def handle_message(message):
 def logsy(message):
     session["user_id"] = None
     room = message["room"]
-    print("logging user out")
+    #print("logging user out")
 
 
 @socketio.on('join')
@@ -146,7 +146,13 @@ def on_join(data):
     jo = username + ' has entered the room ' + room + \
         " at " + datetime.now().strftime('%H:%M:%S %d-%m-%Y')
     print(username, room)
-    if (username != "name" and room != "room"):
+    if (room == "Log Out"):
+        print("logging user out")
+        username = "name"
+        room = "room"
+        session["user_id"] = None
+        leave_room(room)
+    elif (username != "name" and room != "room"):
         send(jo, room=room)
         messages[room].append(jo)
     #send(username + ' has entered the room.', room=room)

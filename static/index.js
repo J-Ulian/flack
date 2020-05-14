@@ -75,28 +75,33 @@ document.addEventListener('DOMContentLoaded', function () {
             link.onclick = () => {
                 let newroom = link.innerHTML;
                 console.log(newroom);
-                let trimmedroom = newroom.trim();
-                console.log(trimmedroom);
-                socket.emit('leave', {
-                    "room": room,
-                    "username": name
-                });
-                localStorage.setItem('room', trimmedroom);
-                socket.emit('join', {
-                    "room": trimmedroom,
-                    "username": name
-                });
-                console.log(`joining new ${trimmedroom}`);
-                load_page(link.dataset.page);
-                room = trimmedroom;
-                document.querySelector("#prompt").innerHTML = `User ${name} in room ${room}`;
-                show();
-                console.log("showed");
-
-                return false;
-                //window.location.reload(true);        
+                if (newroom === "Log Out") {
+                    console.log("found!!!!!!")
+                } else {
 
 
+                    let trimmedroom = newroom.trim();
+                    console.log(trimmedroom);
+                    socket.emit('leave', {
+                        "room": room,
+                        "username": name
+                    });
+                    localStorage.setItem('room', trimmedroom);
+                    socket.emit('join', {
+                        "room": trimmedroom,
+                        "username": name
+                    });
+                    console.log(`joining new ${trimmedroom}`);
+                    load_page(link.dataset.page);
+                    room = trimmedroom;
+                    document.querySelector("#prompt").innerHTML = `User ${name} in room ${room}`;
+                    show();
+                    console.log("showed");
+
+                    return false;
+                    //window.location.reload(true);        
+
+                }
             };
         });
 
@@ -112,6 +117,13 @@ document.addEventListener('DOMContentLoaded', function () {
             else
                 document.querySelector('#submit').disabled = true;
         }
+
+
+
+
+
+
+
 
 
 
@@ -136,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // });
 
         document.getElementById("logout").addEventListener("click", logOut);
+        document.getElementById("message").addEventListener("keypress", submitOnEnter);
 
 
 
@@ -225,6 +238,14 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+function submitOnEnter(event) {
+    if (event.which === 13) {
+        event.target.form.dispatchEvent(new Event("submit", {
+            cancelable: true
+        }));
+        event.preventDefault(); // Prevents the addition of a new line in the text field (not needed in a lot of cases)
+    }
+}
 
 function getDuplicateArrayElements(arr) {
     var sorted_arr = arr.slice().sort();
@@ -240,10 +261,7 @@ function getDuplicateArrayElements(arr) {
 
 function logOut() {
     window.localStorage.clear();
-    room = localStorage.getItem("room");
-    socket.emit("logsy", {
-        "room": room
-    });
+
 
     window.location.reload(true);
 
